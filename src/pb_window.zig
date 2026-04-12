@@ -391,8 +391,6 @@ pub fn init(
     title: [:0]const u8,
     params: PBWindowInitParams,
 ) !*PBWindow {
-    // AFAIK there's no point of exposing this allocator as a prarameter,
-    // because native OS APIs expects it to be allocated with the standard libc allocator.
     const self = try params.allocator.create(PBWindow);
     errdefer params.allocator.destroy(self);
     self.* = .{
