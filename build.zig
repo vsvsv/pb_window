@@ -4,19 +4,38 @@ pub fn build(b: *std.Build) void {
     const target = b.standardTargetOptions(.{});
     const optimize = b.standardOptimizeOption(.{});
 
-    const mod = b.addModule("pixelbuffer", .{
-        .root_source_file = b.path("src/pixelbuffer.zig"),
+    const pbwindow_mod = b.addModule("pb_window", .{
+        .root_source_file = b.path("src/pb_window.zig"),
         .target = target,
+        .link_libc = (target.result.os.tag == .windows or target.result.os.tag == .linux),
     });
 
+    if (target.result.os.tag == .macos) {
+        pbwindow_mod.linkSystemLibrary("objc", .{});
+        pbwindow_mod.linkFramework("Cocoa", .{});
+        pbwindow_mod.linkFramework("CoreVideo", .{});
+    } else if (target.result.os.tag == .windows) {
+        pbwindow_mod.linkSystemLibrary("gdi32", .{});
+        pbwindow_mod.linkSystemLibrary("opengl32", .{});
+        if (target.result.os.isAtLeast(.windows, .win10) orelse false) {
+            pbwindow_mod.linkSystemLibrary("dwmapi", .{});
+        }
+    } else { // All others are considered Linux-like
+        // On Linux, `libx11` and `libgl` libraries are needed for accessing X11 and OpenGL API.
+        // They can be installed by `sudo apt install libx11-dev libgl1-mesa-dev` on Debian-based distros.
+        // On other distributions, search for `x11` and `opengl` packages with your package manager of choice.
+        pbwindow_mod.linkSystemLibrary("X11", .{});
+        pbwindow_mod.linkSystemLibrary("GL", .{});
+    }
+
     const exe = b.addExecutable(.{
-        .name = "pixelbuffer_demo",
+        .name = "pb_window_demo",
         .root_module = b.createModule(.{
             .root_source_file = b.path("src/examples/demo.zig"),
             .target = target,
             .optimize = optimize,
             .imports = &.{
-                .{ .name = "pixelbuffer", .module = mod },
+                .{ .name = "pb_window", .module = pbwindow_mod },
             },
         }),
     });
@@ -31,7 +50,7 @@ pub fn build(b: *std.Build) void {
     }
 
     const mod_tests = b.addTest(.{
-        .root_module = mod,
+        .root_module = pbwindow_mod,
     });
     const run_mod_tests = b.addRunArtifact(mod_tests);
 
