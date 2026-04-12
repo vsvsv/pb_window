@@ -31,7 +31,7 @@ pub fn build(b: *std.Build) void {
     const exe = b.addExecutable(.{
         .name = "pb_window_demo",
         .root_module = b.createModule(.{
-            .root_source_file = b.path("src/examples/demo.zig"),
+            .root_source_file = b.path("src/examples/with_fps_counter.zig"),
             .target = target,
             .optimize = optimize,
             .imports = &.{
