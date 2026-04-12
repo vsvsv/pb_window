@@ -6,6 +6,8 @@ software pixel buffer and gets out of your way.
 ~1200 LoC in a single `src/pb_window.zig`. No dependencies beyond the system libs
 that your OS already ships. That's it.
 
+![pb_window Demo](pbwindow_screenshot.png)
+
 ## What it does
 
 Opens a window. Gives you a raw RGBA8 pixel buffer. Blits it to screen. Handles input.
