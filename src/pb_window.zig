@@ -852,8 +852,7 @@ pub fn init(
                     // zig fmt: on
                     const window: *PBWindow = @ptrCast(@alignCast(user_data.?));
 
-                    var t_io = std.Io.Threaded.init_single_threaded;
-                    const io = t_io.ioBasic();
+                    const io = std.Io.Threaded.global_single_threaded.io();
                     window.platform.vsync_mutex.lockUncancelable(io);
                     defer window.platform.vsync_mutex.unlock(io);
                     window.platform.frame_ready = true; // Signal the main loop that it can proceed.
@@ -967,8 +966,7 @@ pub fn update(self: *PBWindow) bool {
         .macos => {
             if (self.platform.close_requested) return false;
             if (self.vsync) {
-                var t_io = std.Io.Threaded.init_single_threaded;
-                const io = t_io.ioBasic();
+                const io = std.Io.Threaded.global_single_threaded.io();
                 self.platform.vsync_mutex.lockUncancelable(io);
                 while (!self.platform.frame_ready) {
                     self.platform.vsync_cond.waitUncancelable(io, &self.platform.vsync_mutex);

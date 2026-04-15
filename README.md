@@ -34,7 +34,7 @@ Runs on:
 ## Usage
 
 Add `pb_window` as a Zig package dependency, or just vendor the file.
-The minimum Zig version is `0.16.0-dev.2537+52a624244`.
+The minimum Zig version is `0.16.0`.
 
 ### Linux prerequisites
 

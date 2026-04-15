@@ -14,8 +14,8 @@ pub const FrameCounter = struct {
 
     /// Updates counter stats. Should be called every frame.
     pub fn tick(self: *Self) void {
-        var t_io = std.Io.Threaded.init_single_threaded;
-        const now: u64 = @intCast(std.Io.Clock.awake.now(t_io.ioBasic()).toNanoseconds());
+        const io = std.Io.Threaded.global_single_threaded.io();
+        const now: u64 = @intCast(std.Io.Clock.awake.now(io).toNanoseconds());
         if (self.last_frame_time == null) {
             self.last_frame_time = now;
             return;
